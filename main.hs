@@ -6,10 +6,38 @@ data Money = Money Double deriving (Show)
 -- a cover is a contractual obligation to insure some risk against some event
   -- there is a cost ("cover premium") associated with providing this cover
   -- the cost depends on material facts of the risk & event
--- a cover premium is calculated based on one or more data fields (statements) in the Rfq,
--- and some rating criteria set by the insurer
+  -- material facts are also known as "risk variables"
+
+-- cover premium is calculated based on some or all of the risk variables,  and rating criteria set by the insurer
  -- table lookups
  -- multipliers ("load factors"?)
+
+-- exposure base is the "basic unit of risk" to which the insurance
+-- rate applies: some very good proxy for expected losses.  Classic
+-- rating model design is to (1) apply a rate to the number of units
+-- of the exposure base, which may be flat/regressive/progressive depending
+-- on relationship btwn insured "size" & expected loss, (2) fiddle with it
+-- based on other factors.
+
+-- with any model that has {pro,re}gressive rates it is worth checking
+-- that the premium is a continuous function of the number of units
+
+-- one approach to applying rating discounts, which guarantees this,
+-- is to use "marginal" rates: if there is an inflection at, say,
+-- £40000 turnover, then charge x% on the first £40k and x-y% on
+-- (remaining turnover - 40000) - like HMRC do for income tax.  This
+-- may be combined with a flat fee for the first £x000 before unit
+-- rates kick in
+
+-- once we've done the basic rate and the fiddling, we may also want
+-- to apply a minimum premium (account for fixed-cost overheads of
+-- selling & managing the policy)
+
+
+-- I have a vague idea that a Cover should include details of the
+-- thing covered: relevant risk variables or similar.  String is
+-- obviously not the right type for this, but I haven't decided what
+-- is.
 
 data Cover = Cover (String, Money) deriving (Show)
 
