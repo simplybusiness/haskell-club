@@ -3,6 +3,10 @@ isZero x = (if x == 0 then True else False)
 
 data Money = Money Double deriving (Show)
 
+instance Eq Money where (Money m1) == (Money m2) = m1 == m2
+instance Ord Money where (Money m1) `compare` (Money m2) =
+                           m1 `compare` m2
+
 -- a cover is a contractual obligation to insure some risk against some event
   -- there is a cost ("cover premium") associated with providing this cover
   -- the cost depends on material facts of the risk & event
