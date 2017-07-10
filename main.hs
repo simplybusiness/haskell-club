@@ -1,3 +1,4 @@
+import qualified Data.Map as Map 
 
 isZero x = (if x == 0 then True else False)
 
@@ -49,28 +50,47 @@ data Cover = Cover (String, Money) deriving (Show)
 
 data Decision = Offer Cover |  Rejection String deriving (Show)
 
--- respondToRfq :: [RatingTable] -> [Statement] -> Decision
+type Rate = Double
 
+data RateData a = FixedFee a
+                | FlatRate Rate
+                | Bands [(a, Rate)]
+                | MarginalBands [(a, Rate)]
+                deriving (Show)
 
--- find largest el in table which is smaller than val
-lookupBand (Just table) val =
-  let f (upperLimit, _) = (fromIntegral(upperLimit) > val) in
-    head (filter f table)
+applyRate (Money m) r = Money(m * r)
+
+-- computePrice :: (RateData a) -> a -> a
+
+computePrice (FixedFee m) val = m
+
+computePrice (FlatRate m) val = applyRate val m 
+
+computePrice (Bands table) val =
+  let f (upperLimit, _) = (upperLimit > val)
+      (threshold, rate) = head (filter f table) in
+      computePrice (FlatRate rate) val
+
 
 myTables = [("turnover-bands",
-             [(10000, 0.1),
-               (20000, 0.05),
-               (50000, 0.04),
-               (100000, 0.02)])]
-           
-  
-maybeOfferCover tables facts = 
-  let (Just trn) = (lookup "turnover" facts)
-      ttable = (lookup "turnover-bands" tables)
-      (threshold, rate) = (lookupBand ttable trn) in
-    Offer (Cover ("thanks", Money (trn * rate)))
+             Bands [(Money 10000.0, 0.1),
+                    (Money 20000.0, 0.05),
+                    (Money 50000.0, 0.04),
+                    (Money 100000.0, 0.02)])]
 
--- maybeOfferCover myTables  [("turnover", 15000.0)]
+project m fields = Map.intersection m fieldsMap
+  where fieldsMap = (Map.fromList (Prelude.map (\l -> (l,l)) fields))
+
+
+maybeOfferCover tables facts = 
+  let materialFacts = project (Map.fromList facts) ["turnover"]
+      trn = materialFacts Map.! "turnover"
+      (Just ttable) = (lookup "turnover-bands" tables)
+      price = computePrice ttable trn in
+    Offer (Cover ("thanks", price))
+
+-- maybeOfferCover myTables  [("turnover", (Money 15000.0))]
+
   
 commissionRate = 0.1
 
