@@ -71,9 +71,9 @@ take 3 (endlessly "boot stamping, human face")
 
 * Resources
 
-* http://learnyouahaskell.com/chapters
-* http://blog.sigfpe.com/2006/08/you-could-have-invented-monads-and.html
-* Google (often leading to Stack Overflow)
+ * http://learnyouahaskell.com/chapters 
+ * http://blog.sigfpe.com/2006/08/you-could-have-invented-monads-and.html
+ * Google (often leading to Stack Overflow)
 
 * Call To Action
 
