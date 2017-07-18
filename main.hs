@@ -72,15 +72,66 @@ computePrice (Bands table) val =
       computePrice (FlatRate rate) val
 
 
-myTables = [("turnover-bands",
-             Bands [(Money 10000.0, 0.1),
-                    (Money 20000.0, 0.05),
-                    (Money 50000.0, 0.04),
-                    (Money 100000.0, 0.02)])]
+turnoverTable = Bands [(Money 10000.0, 0.1),
+                       (Money 20000.0, 0.05),
+                       (Money 50000.0, 0.04),
+                       (Money 100000.0, 0.02)]
+
+employeesTable = Bands [(4, 0.1),
+                        (10, 0.05),
+                        (25, 0.04),
+                        (100, 0.02)]
+
+-- feels like we should be able to do something like this
+
+offerEL facts = foldl applyLoad
+  (computePrice turnoverTable (facts ! "turnover"))
+  [(getRate employeesTable (facts ! "employees"))
+   (getRate wagesTable (facts ! "monthly_paye_bill"))
+   (getRate trainingDiscount (facts ! "diversity_training?"))]
+
+-- we calculated the base price w/o reference to any preceding price, 
+-- but loads are calculated by multiplying the current price by some
+-- factor.  For marginal rate tables we apply different rates to
+-- different brackets of the fact being assessed.  My head hurts
+-- when I think about how this would work with a load rather than a
+-- base price
+
+-- are we conflating two things?
+-- (1) there is an attribute to be scaled
+-- (2) there is a mechanism (may be a simple rate or a collection of
+--  marginal rates chosen from a table) for scaling it
+-- (3) the index into the table may be something other than the attribute (1)
+
+-- (scaling table) (scaling table selector) = scaling function
+-- (scaling table) (scaling table selector) (thing to be scaled) = (scaled thing)
+
+
+
+-- for load factors, (1) is the already-calculated premium from some
+-- previous calculation.  For base prices, (1) is one of the facts.
+-- Could we pass an identity unit of currency (Money 1) as input and
+-- therefore calculate base price as a load factor?
+
+
+
+
+
+-- Also/But: we might want to ask for the facts not the price so maybe we
+-- need to represent computations of covers using data not code
+
+elCover = Coverer [(turnoverTable, "turnover"),
+                   (employeesTable, "employees"),
+                   (wagesTable, "monthly_paye_bill"),
+                   (trainingDiscount, "diversity_training?")]
+
+
+
+
+myTables = [("turnover-bands", turnoverTable)]
 
 project m fields = Map.intersection m fieldsMap
   where fieldsMap = (Map.fromList (Prelude.map (\l -> (l,l)) fields))
-
 
 maybeOfferCover tables facts = 
   let materialFacts = project (Map.fromList facts) ["turnover"]
