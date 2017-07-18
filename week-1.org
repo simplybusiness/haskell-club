@@ -1,0 +1,94 @@
+* Why? (Recap our motivation)
+
+Hypothesis: writing a ratings engine in a strongly-typed lazy functional programming language will teach us valuable things about 
+
+ * (strongly typed, lazy, functional) programming
+ * DSLs that aren't just method_missing
+ * insurance
+ * how to rearrange X-Rated to make it make sense
+ 
+* Getting started
+
+#+BEGIN_SRC sh
+git clone git@github.com:simplybusiness/haskell-club
+brew install ghc
+cd haskell-club
+ghci
+:l ratings.hs
+#+END_SRC
+
+* All the Haskell I know 
+
+ * Function definition (pattern matching)
+
+#+BEGIN_SRC haskell
+fib 0 = 0
+fib 1 = 1
+fib n = (fib (n-1)) * (fib (n-2)) 
+#+END_SRC
+
+ * Type inference
+
+#+BEGIN_SRC haskell
+:t fib
+#+END_SRC
+
+ * create new types
+
+#+BEGIN_SRC haskell
+data Speed = Forward Int | Backward Int | Stopped
+#+END_SRC
+
+ * partial application
+
+#+BEGIN_SRC haskell
+mult x y = x*y
+double = mult 2
+double 4
+#+END_SRC
+
+ * Laziness
+
+#+BEGIN_SRC haskell
+endlessly x = x : endlessly x
+take 3 (endlessly "boot stamping, human face")
+#+END_SRC
+ 
+* The application
+
+** two stages to calculating a premium:
+
+ * base premium based on exposure units
+ * loads/discounts based on other risk values
+
+** different kinds of table lookup
+
+ * progressive vs flat vs regressive
+ * marginal rates
+ * maybe others?
+
+** what so far?
+
+
+
+* Next steps
+
+ * implement marginal rates
+ * a real-world rating model
+ * compiling/deploying/using it
+ * editor integration
+ * unit testing?
+ * Postcodes shouldn't have to be Ord
+
+
+
+
+* Look away now
+
+Local variables:
+mode: org
+eval: (variable-pitch-mode)
+eval: (visual-line-mode)
+eval: (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+org-present-text-scale: 3
+End:
