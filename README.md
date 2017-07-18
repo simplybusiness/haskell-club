@@ -10,3 +10,10 @@ The eighth and final rule is: if it's your first time, you _have_ to
 drive.
 
 See [week 1](week-1.org) for the first episode
+
+## Intellectual property / Commercial secrecy warning 
+
+Simply Business employees heads-up - _this is a public repository_.  If you want to
+work with real rating models or other commercially sensitive
+intellectual property, this repo would be *exactly the wrong place to
+do it*.

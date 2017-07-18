@@ -78,7 +78,7 @@ take 3 (endlessly "boot stamping, human face")
 * Call To Action
 
  * implement marginal rates
- * a real-world rating model
+ * a real-world rating model (but not in a public repo)
  * compiling/deploying/using it
  * editor integration
  * unit testing?
