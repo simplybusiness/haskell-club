@@ -5,7 +5,7 @@ Hypothesis: writing a ratings engine in a strongly-typed lazy functional program
  * (strongly typed, lazy, functional) programming
  * DSLs that aren't just method_missing
  * insurance
- * how to rearrange X-Rated to make it make sense
+ * what direction to take X-Rated
  
 * Getting started
 
@@ -33,13 +33,13 @@ fib n = (fib (n-1)) * (fib (n-2))
 :t fib
 #+END_SRC
 
- * create new types
+ * Creating new types
 
 #+BEGIN_SRC haskell
 data Speed = Forward Int | Backward Int | Stopped
 #+END_SRC
 
- * partial application
+ * Partial application (a.k.a Currying)
 
 #+BEGIN_SRC haskell
 mult x y = x*y
@@ -47,7 +47,7 @@ double = mult 2
 double 4
 #+END_SRC
 
- * Laziness
+ * Lazy evaluation
 
 #+BEGIN_SRC haskell
 endlessly x = x : endlessly x
@@ -69,9 +69,13 @@ take 3 (endlessly "boot stamping, human face")
 
 ** what so far?
 
+* Resources
 
+* http://learnyouahaskell.com/chapters
+* http://blog.sigfpe.com/2006/08/you-could-have-invented-monads-and.html
+* Google (often leading to Stack Overflow)
 
-* Next steps
+* Call To Action
 
  * implement marginal rates
  * a real-world rating model
