@@ -36,7 +36,7 @@ fib n = (fib (n-1)) * (fib (n-2))
  * Creating new types
 
 #+BEGIN_SRC haskell
-data Speed = Forward Int | Backward Int | Stopped
+data Speed = Forward Int | Backward Int | Stopped deriving (Show)
 #+END_SRC
 
  * Partial application (a.k.a Currying)
