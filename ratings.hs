@@ -1,5 +1,6 @@
 import qualified Data.Map as Map
 import qualified Data.List as List
+import Test.QuickCheck
 
   
 -- Some background to the problem:
@@ -101,6 +102,26 @@ data RateTable a = Bands [(a, Rate)]
                  | Match [(a, Rate)]
                  deriving (Show)
 
+exampleEmployeesTable = Bands [(0, 0.2),
+                               (4, 0.1),
+                               (10, 0.05),
+                               (25, 0.04),
+                               (100, 0.02)]
+
+
+findEntry (Bands table) index = 
+  let f (upperLimit, _) = (upperLimit <= index) in
+    last (filter f table)
+
+prop_findEntry_ret_smaller_than_index index =
+  let (th, r) = findEntry exampleEmployeesTable index in
+    th <= index
+
+-- quickCheck prop_findEntry_ret_smaller_than_index 
+-- blows up when it tries index of -1
+-- we might consider this a successful (i.e. informative) test run
+  
+          
 applyRate (Match table) index val = 
   let (Just rate) = lookup index table in
        multiply rate val
@@ -115,11 +136,6 @@ exampleTurnoverTable = Bands [(Money 10000.0, 0.1),
                               (Money 20000.0, 0.05),
                               (Money 50000.0, 0.04),
                               (Money 100000.0, 0.02)]
-
-exampleEmployeesTable = Bands [(4, 0.1),
-                               (10, 0.05),
-                               (25, 0.04),
-                               (100, 0.02)]
 
 data Postcode = Postcode String
 instance Eq Postcode where (Postcode p1) == (Postcode p2) = p1 == p2
