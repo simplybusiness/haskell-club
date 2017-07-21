@@ -9,7 +9,27 @@ We haven't decided on rules Two thru Seven
 The eighth and final rule is: if it's your first time, you _have_ to
 drive.
 
-See [week 1](week-1.org) for the first episode
+## Captain's Log
+
+ * [week 1](week-1.org)
+ * [week 2](week-2.org)
+
+## Installation
+
+You need ghc and cabal
+
+* On Mac, `brew install ghc cabal-install`
+* on Nix, `nix-shell`
+
+
+Now you can run
+
+```
+cabal update
+cabal sandbox init
+cabal install --only-dependencies
+```
+
 
 ## Intellectual property / Commercial secrecy warning 
 
