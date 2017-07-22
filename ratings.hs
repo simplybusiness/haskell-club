@@ -113,14 +113,11 @@ findEntry (Bands table) index =
   let f (upperLimit, _) = (upperLimit <= index) in
     last (filter f table)
 
-prop_findEntry_ret_smaller_than_index index =
+prop_findEntry_ret_smaller_than_index :: NonNegative Int -> Bool
+prop_findEntry_ret_smaller_than_index (NonNegative index) =
   let (th, r) = findEntry exampleEmployeesTable index in
     th <= index
 
--- quickCheck prop_findEntry_ret_smaller_than_index 
--- blows up when it tries index of -1
--- we might consider this a successful (i.e. informative) test run
-  
           
 applyRate (Match table) index val = 
   let (Just rate) = lookup index table in
