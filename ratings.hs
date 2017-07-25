@@ -109,13 +109,34 @@ exampleEmployeesTable = Bands [(0, 0.2),
                                (100, 0.02)]
 
 
-findEntry (Bands table) index = 
+findEntry table index = 
   let f (upperLimit, _) = (upperLimit <= index) in
     last (filter f table)
 
+-- discovering properties is hard
+
+-- the found entry e should be a member of the table
+
+prop_findEntry_ret_in_table :: NonNegative Int -> Bool
+prop_findEntry_ret_in_table (NonNegative index) =
+  let rows = [(0, 0.2),
+              (4, 0.1),
+              (10, 0.05),
+              (25, 0.04),
+              (100, 0.02)]
+      e = findEntry rows index in
+    elem e rows
+
+-- the threshold of e is <= the search index
+
 prop_findEntry_ret_smaller_than_index :: NonNegative Int -> Bool
 prop_findEntry_ret_smaller_than_index (NonNegative index) =
-  let (th, r) = findEntry exampleEmployeesTable index in
+  let rows = [(0, 0.2),
+              (4, 0.1),
+              (10, 0.05),
+              (25, 0.04),
+              (100, 0.02)]
+      (th, r) = findEntry rows index in
     th <= index
 
           
@@ -124,8 +145,7 @@ applyRate (Match table) index val =
        multiply rate val
 
 applyRate (Bands table) index val =
-  let f (upperLimit, _) = (upperLimit > index)
-      (threshold, rate) = head (filter f table) in
+  let (threshold, rate) = findEntry table index in
       multiply rate val
 
 
