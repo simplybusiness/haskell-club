@@ -27,8 +27,9 @@ to download anything you don't already have and run ghci in a context where it c
 The essence of property-based testing is that you describe properties
 your functions must have, but instead of then manually writing test cases to demonstrate those properties hold, QuickCheck generates random data to test them for you.
 
-A good way to write properties is to work out what the inverse of your function might be, then you 
-can write e.g.
+Finding properties is *hard*, but there are a bunch of techniques you can
+try.  For example, if your function has an inverse, you can
+write a property to say that:
 
 #+BEGIN_SRC haskell
 import Test.QuickCheck
@@ -50,6 +51,17 @@ This function contains a deliberate error, can you spot it?
 7
 #+END_SRC
 
+
+#+END_SRC
+
+* Lambdas
+
+a.k.a. anonymous functions.  
+
+#+BEGIN_SRC haskell
+Prelude> filter (\a -> (null a) || (odd (read a))) ["","1","2","3"]
+["","1","3"]
+#+END_SRC
 
 
 * Look away now
