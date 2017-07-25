@@ -24,8 +24,8 @@ to download anything you don't already have and run ghci in a context where it c
 
 * QuickCheck
 
-The essence of property-based testing is that you describe properties your functions must have
-and then QuckCHeck tests them with random data to make sure the properties hold.
+The essence of property-based testing is that you describe properties
+your functions must have, but instead of then manually writing test cases to demonstrate those properties hold, QuickCheck generates random data to test them for you.
 
 A good way to write properties is to work out what the inverse of your function might be, then you 
 can write e.g.
