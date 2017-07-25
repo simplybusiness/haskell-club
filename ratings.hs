@@ -113,9 +113,9 @@ findEntry table index =
   let f (upperLimit, _) = (upperLimit <= index) in
     last (filter f table)
 
--- discovering properties is hard
+-- Discovering properties is hard.  Here are some I thought of.
 
--- the found entry e should be a member of the table
+-- (1) the found entry e should be a member of the table
 
 prop_findEntry_ret_in_table :: NonNegative Int -> Bool
 prop_findEntry_ret_in_table (NonNegative index) =
@@ -127,7 +127,7 @@ prop_findEntry_ret_in_table (NonNegative index) =
       e = findEntry rows index in
     elem e rows
 
--- the threshold of e is <= the search index
+-- (2) the threshold of e is <= the search index
 
 prop_findEntry_ret_smaller_than_index :: NonNegative Int -> Bool
 prop_findEntry_ret_smaller_than_index (NonNegative index) =
@@ -138,6 +138,24 @@ prop_findEntry_ret_smaller_than_index (NonNegative index) =
               (100, 0.02)]
       (th, r) = findEntry rows index in
     th <= index
+
+-- (3) no entry in table has a threshold higher than e and lower than index
+
+-- This is kind of complicated, and I don't much like it for that
+-- reason.  I think usually tests should be less complicated than the
+-- code they're testing, because I like it to be obvious which of them is
+-- wrong when they disagree.
+
+prop_findEntry_no_better_row :: NonNegative Int -> Bool
+prop_findEntry_no_better_row (NonNegative index) =
+  let rows = [(0, 0.2),
+              (4, 0.1),
+              (10, 0.05),
+              (25, 0.04),
+              (100, 0.02)]
+      (th, r) = findEntry rows index in
+    null (filter (\ (r_th, _) -> (r_th > th) && (r_th < index)) rows)
+
 
           
 applyRate (Match table) index val = 
