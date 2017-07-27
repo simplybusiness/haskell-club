@@ -146,16 +146,20 @@ prop_findEntry_ret_smaller_than_index (NonNegative index) =
 -- code they're testing, because I like it to be obvious which of them is
 -- wrong when they disagree.
 
-prop_findEntry_no_better_row :: NonNegative Int -> Bool
-prop_findEntry_no_better_row (NonNegative index) =
-  let rows = [(0, 0.2),
-              (4, 0.1),
-              (10, 0.05),
-              (25, 0.04),
-              (100, 0.02)]
+data Entry = Entry (Int, Double) deriving (Show)
+getEntry (Entry x) = x
+
+instance Arbitrary Entry where
+   arbitrary = do
+     th <- choose(0,100000)
+     rate <- choose(0.01, 0.99)
+     return $ Entry(th,rate)
+
+prop_findEntry_no_better_row :: [Entry] -> NonNegative Int -> Bool
+prop_findEntry_no_better_row entries (NonNegative index)  =
+  let rows = (map getEntry entries)
       (th, r) = findEntry (Bands rows) index in
     null (filter (\ (r_th, _) -> (r_th > th) && (r_th < index)) rows)
-
 
           
 applyRate (Match table) index val = 
