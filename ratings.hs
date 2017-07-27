@@ -203,3 +203,8 @@ costOfEL turnover postcode =
              (applyRate exampleFloodTable postcode),
              (applyRate exampleTheftTable postcode)])
     turnover
+
+runProps = let props = [prop_findEntry_ret_in_table,
+                        prop_findEntry_ret_smaller_than_index,
+                        prop_findEntry_no_better_row] in
+             sequence_ (map quickCheck props)
