@@ -138,25 +138,17 @@ instance Arbitrary Entries where
 
 -- (1) the found entry e should be a member of the table
 
-prop_findEntry_ret_in_table :: NonNegative Int -> Bool
-prop_findEntry_ret_in_table (NonNegative index) =
-  let rows = [(0, 0.2),
-              (4, 0.1),
-              (10, 0.05),
-              (25, 0.04),
-              (100, 0.02)]
+prop_findEntry_ret_in_table :: Entries -> NonNegative Int -> Bool
+prop_findEntry_ret_in_table (Entries entries) (NonNegative index) =
+  let rows = map getTuple entries
       e = findEntry (Bands rows) index in
     elem e rows
 
 -- (2) the threshold of e is <= the search index
 
-prop_findEntry_ret_smaller_than_index :: NonNegative Int -> Bool
-prop_findEntry_ret_smaller_than_index (NonNegative index) =
-  let rows = [(0, 0.2),
-              (4, 0.1),
-              (10, 0.05),
-              (25, 0.04),
-              (100, 0.02)]
+prop_findEntry_ret_smaller_than_index :: Entries -> NonNegative Int -> Bool
+prop_findEntry_ret_smaller_than_index (Entries e) (NonNegative index) =
+  let rows = map getTuple e
       (th, r) = findEntry (Bands rows) index in
     th <= index
 
@@ -173,7 +165,6 @@ prop_findEntry_no_better_row (Entries entries) (NonNegative index)  =
       (th, r) = findEntry (Bands rows) index in
     null (filter (\ (r_th, _) -> (r_th > th) && (r_th < index)) rows)
 
-          
 applyRate (Match table) index val = 
   let (Just rate) = lookup index table in
        multiply rate val
@@ -222,6 +213,6 @@ costOfEL turnover postcode =
 
 runProps = let props = [prop_findEntry_ret_in_table
                         , prop_findEntry_ret_smaller_than_index
-                        -- , prop_findEntry_no_better_row
+                        , prop_findEntry_no_better_row
                         ] in
              sequence_ (map quickCheck props)
