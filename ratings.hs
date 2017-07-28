@@ -128,7 +128,8 @@ instance Arbitrary Entry where
 data Entries = Entries [Entry] deriving (Show)
 
 instance Arbitrary Entries where
-   arbitrary = do
+  shrink (Entries e) = map (\ es -> Entries $ (head e) : es) (shrink (tail e))
+  arbitrary = do
      arr <- arbitrary
      -- we require there is an entry with threshold 0
      return $ Entries (Entry (0,0.0) : arr)
