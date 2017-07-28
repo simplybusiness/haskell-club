@@ -128,11 +128,12 @@ instance Arbitrary Entry where
 data Entries = Entries [Entry] deriving (Show)
 
 instance Arbitrary Entries where
-  shrink (Entries e) = map (\ es -> Entries $ (head e) : es) (shrink (tail e))
   arbitrary = do
      arr <- arbitrary
      -- we require there is an entry with threshold 0
      return $ Entries (Entry (0,0.0) : arr)
+  -- don't lose the threshold 0 entry when shrinking
+  shrink (Entries e) = map (\ es -> Entries $ (head e) : es) (shrink (tail e))
 
 
 -- Discovering properties is hard.  Here are some I thought of.

@@ -52,15 +52,49 @@ This function contains a deliberate error, can you spot it?
 #+END_SRC
 
 
-#+END_SRC
+* Some more syntax
 
-* Lambdas
+** Lambdas
 
 a.k.a. anonymous functions.  
 
 #+BEGIN_SRC haskell
 Prelude> filter (\a -> (null a) || (odd (read a))) ["","1","2","3"]
 ["","1","3"]
+#+END_SRC
+
+** Screwing with operator precedence
+
+`$` changes the precedence to act as a kind of "super bracket until end of line".  Thus:
+
+#+BEGIN_SRC haskell
+*Main> double x = x * 2
+*Main> double 3 + 1
+7
+*Main> double $ 3 + 1
+8
+#+END_SRC
+
+The first example is parsed as (double 3) + 1, and the second is (double(3 + 1))
+
+** Make it infix
+
+Backticks `  turn a function into an infix operator
+
+#+BEGIN_SRC haskell
+*Main> applyRate base rate = base * rate
+*Main> 100 `applyRate` 0.03
+3.0
+#+END_SRC
+
+** Make it prefix
+
+Surround an infix operator in parentheses to turn it into a function call:
+
+
+#+BEGIN_SRC haskell
+*Main> (*) 5 6
+30
 #+END_SRC
 
 
