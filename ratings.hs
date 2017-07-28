@@ -111,7 +111,7 @@ exampleEmployeesTable = Bands [(0, 0.2),
 
 findEntry (Bands table) index = 
   let f (upperLimit, _) = (upperLimit <= index) in
-    last (filter f table)
+    last (List.sort (filter f table))
 
 -- these are helper types to generate arbitrary rating tables for testing
 -- findEntry
