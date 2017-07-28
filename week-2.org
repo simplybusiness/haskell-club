@@ -1,0 +1,109 @@
+Welcome to week 2
+
+* packages (cabal)
+
+This is for a "sandboxed" installation like bundler or virtualenv
+
+#+BEGIN_SRC sh
+brew install cabal-install
+cabal init # "in an empty directory", it says. Answer the questions
+cabal sandbox init
+#+END_SRC
+
+This creates, among other things, a file ~haskell-club.cabal~ in which
+you can add dependencies by putting them on the ~build-depends~ line
+(comma-separated).  Now do
+
+#+BEGIN_SRC sh
+cabal install --only-dependencies
+# cabal repl # this doesn't work, don't understand why yet
+cabal exec -- ghci  # do this instead
+#+END_SRC
+
+to download anything you don't already have and run ghci in a context where it can see all this stuff
+
+* QuickCheck
+
+The essence of property-based testing is that you describe properties
+your functions must have, but instead of then manually writing test cases to demonstrate those properties hold, QuickCheck generates random data to test them for you.
+
+Finding properties is *hard*, but there are a bunch of techniques you can
+try.  For example, if your function has an inverse, you can
+write a property to say that:
+
+#+BEGIN_SRC haskell
+import Test.QuickCheck
+
+double 7 = 13
+double x =  x + x 
+
+prop_double_x_is_twice_x x = (double x) == x * 2
+#+END_SRC
+
+This function contains a deliberate error, can you spot it?
+
+#+BEGIN_SRC haskell
+*Main> quickCheck prop_double_x_is_twice_x
+*** Failed! Falsifiable (after 22 tests):
+7
+*Main> quickCheck prop_double_x_is_twice_x
+*** Failed! Falsifiable (after 11 tests):
+7
+#+END_SRC
+
+
+* Some more syntax
+
+** Lambdas
+
+a.k.a. anonymous functions.  
+
+#+BEGIN_SRC haskell
+Prelude> filter (\a -> (null a) || (odd (read a))) ["","1","2","3"]
+["","1","3"]
+#+END_SRC
+
+** Screwing with operator precedence
+
+`$` changes the precedence to act as a kind of "super bracket until end of line".  Thus:
+
+#+BEGIN_SRC haskell
+*Main> double x = x * 2
+*Main> double 3 + 1
+7
+*Main> double $ 3 + 1
+8
+#+END_SRC
+
+The first example is parsed as (double 3) + 1, and the second is (double(3 + 1))
+
+** Make it infix
+
+Backticks `  turn a function into an infix operator
+
+#+BEGIN_SRC haskell
+*Main> applyRate base rate = base * rate
+*Main> 100 `applyRate` 0.03
+3.0
+#+END_SRC
+
+** Make it prefix
+
+Surround an infix operator in parentheses to turn it into a function call:
+
+
+#+BEGIN_SRC haskell
+*Main> (*) 5 6
+30
+#+END_SRC
+
+
+* Look away now
+
+Local variables:
+mode: org
+eval: (variable-pitch-mode)
+eval: (visual-line-mode)
+eval: (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+org-present-text-scale: 3
+End:

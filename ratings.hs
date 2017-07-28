@@ -1,5 +1,6 @@
 import qualified Data.Map as Map
 import qualified Data.List as List
+import Test.QuickCheck
 
   
 -- Some background to the problem:
@@ -101,13 +102,77 @@ data RateTable a = Bands [(a, Rate)]
                  | Match [(a, Rate)]
                  deriving (Show)
 
+exampleEmployeesTable = Bands [(0, 0.2),
+                               (4, 0.1),
+                               (10, 0.05),
+                               (25, 0.04),
+                               (100, 0.02)]
+
+
+findEntry (Bands table) index = 
+  let f (upperLimit, _) = (upperLimit <= index) in
+    last (List.sort (filter f table))
+
+-- these are helper types to generate arbitrary rating tables for testing
+-- findEntry
+
+data Entry = Entry (Int, Double) deriving (Show)
+getTuple (Entry x) = x
+
+instance Arbitrary Entry where
+   arbitrary = do
+     th <- choose(0,100000)
+     rate <- choose(0.01, 0.99)
+     return $ Entry(th,rate)
+
+data Entries = Entries [Entry] deriving (Show)
+
+instance Arbitrary Entries where
+  arbitrary = do
+     arr <- arbitrary
+     -- we require there is an entry with threshold 0
+     return $ Entries (Entry (0,0.0) : arr)
+  -- don't lose the threshold 0 entry when shrinking
+  shrink (Entries e) = map (\ es -> Entries $ (head e) : es) (shrink (tail e))
+
+
+-- Discovering properties is hard.  Here are some I thought of.
+
+-- (1) the found entry e should be a member of the table
+
+prop_findEntry_ret_in_table :: Entries -> NonNegative Int -> Bool
+prop_findEntry_ret_in_table (Entries entries) (NonNegative index) =
+  let rows = map getTuple entries
+      e = findEntry (Bands rows) index in
+    elem e rows
+
+-- (2) the threshold of e is <= the search index
+
+prop_findEntry_ret_smaller_than_index :: Entries -> NonNegative Int -> Bool
+prop_findEntry_ret_smaller_than_index (Entries e) (NonNegative index) =
+  let rows = map getTuple e
+      (th, r) = findEntry (Bands rows) index in
+    th <= index
+
+-- (3) no entry in table has a threshold higher than e and lower than index
+
+-- This is kind of complicated, and I don't much like it for that
+-- reason.  I think usually tests should be less complicated than the
+-- code they're testing, because I like it to be obvious which of them is
+-- wrong when they disagree.
+
+prop_findEntry_no_better_row :: Entries -> NonNegative Int -> Bool
+prop_findEntry_no_better_row (Entries entries) (NonNegative index)  =
+  let rows = (map getTuple entries)
+      (th, r) = findEntry (Bands rows) index in
+    null (filter (\ (r_th, _) -> (r_th > th) && (r_th < index)) rows)
+
 applyRate (Match table) index val = 
   let (Just rate) = lookup index table in
        multiply rate val
 
 applyRate (Bands table) index val =
-  let f (upperLimit, _) = (upperLimit > index)
-      (threshold, rate) = head (filter f table) in
+  let (threshold, rate) = findEntry (Bands table) index in
       multiply rate val
 
 
@@ -115,11 +180,6 @@ exampleTurnoverTable = Bands [(Money 10000.0, 0.1),
                               (Money 20000.0, 0.05),
                               (Money 50000.0, 0.04),
                               (Money 100000.0, 0.02)]
-
-exampleEmployeesTable = Bands [(4, 0.1),
-                               (10, 0.05),
-                               (25, 0.04),
-                               (100, 0.02)]
 
 data Postcode = Postcode String
 instance Eq Postcode where (Postcode p1) == (Postcode p2) = p1 == p2
@@ -152,3 +212,18 @@ costOfEL turnover postcode =
              (applyRate exampleFloodTable postcode),
              (applyRate exampleTheftTable postcode)])
     turnover
+
+-- run all the property tests.  What's interesting - as well as
+-- slightly annoying - here, is that although quickCheck can
+-- be invoked on a property with any kinds and numbers of arguments
+-- and it somehow figures out what to do, we can't put properties
+-- with different type signatures into a list together. Because,
+-- "obviously"[*] they have different types
+
+-- [*] obvious in retrospect, it took me a while to realise
+
+runProps = let props = [prop_findEntry_ret_in_table
+                        , prop_findEntry_ret_smaller_than_index
+                        , prop_findEntry_no_better_row
+                        ] in
+             sequence_ (map quickCheck props)
