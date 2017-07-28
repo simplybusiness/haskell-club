@@ -213,6 +213,15 @@ costOfEL turnover postcode =
              (applyRate exampleTheftTable postcode)])
     turnover
 
+-- run all the property tests.  What's interesting - as well as
+-- slightly annoying - here, is that although quickCheck can
+-- be invoked on a property with any kinds and numbers of arguments
+-- and it somehow figures out what to do, we can't put properties
+-- with different type signatures into a list together. Because,
+-- "obviously"[*] they have different types
+
+-- [*] obvious in retrospect, it took me a while to realise
+
 runProps = let props = [prop_findEntry_ret_in_table
                         , prop_findEntry_ret_smaller_than_index
                         , prop_findEntry_no_better_row
