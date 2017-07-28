@@ -30,6 +30,23 @@ cabal sandbox init
 cabal install --only-dependencies
 ```
 
+## Running tests
+
+Maybe do something like this:
+
+
+```
+[nix-shell:~/src/haskell-club]$ cabal exec -- ghci
+GHCi, version 8.0.2: http://www.haskell.org/ghc/  :? for help
+Prelude> :l ratings
+[1 of 1] Compiling Main             ( ratings.hs, interpreted )
+Ok, modules loaded: Main.
+*Main> runProps 
++++ OK, passed 100 tests.
++++ OK, passed 100 tests.
++++ OK, passed 100 tests.
+```
+
 
 ## Intellectual property / Commercial secrecy warning 
 
