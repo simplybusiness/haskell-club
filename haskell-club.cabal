@@ -57,7 +57,7 @@ library
   -- other-extensions:    
   
   -- Other library packages from which modules are imported.
-  build-depends:       QuickCheck, containers, base >=4.9 && <4.10
+  build-depends:       QuickCheck, containers, servant, servant-server, wai, base >=4.9 && <4.10
                        
   
   -- Directories containing source files.
